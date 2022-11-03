@@ -1,0 +1,154 @@
+<div class="page-header">
+    <h3 class="page-title">
+        Admins
+    </h3>
+    <nav aria-label="breadcrumb">
+        <button type="button" class="btn btn-warning btn-fw" *ngIf="sharedUserData.isSuperAdmin" (click)="openAddModal(addModal)">Add</button>
+    </nav>
+</div>
+
+<ng-container *ngIf="gettingData; else elseFoundDataTemplate">
+    <loading-spinner></loading-spinner>
+</ng-container>
+<ng-template #elseFoundDataTemplate>
+    <empty-list *ngIf="admins.length <= 0"></empty-list>
+    <div class="col-lg-12 grid-margin stretch-card" *ngIf="admins.length > 0">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Admins List</h4>
+                <!-- <p class="card-description">
+                    Add class <code>.table-striped</code>
+                </p> -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    User
+                                </th>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Creation Date
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of admins">
+                                <td class="py-1">
+                                    <ng-container
+                                        *ngIf="(item.avatarUrl && item.avatarUrl.length > 0); else elseNoImageTemplate">
+                                        <img [src]="item.imageurl" alt="user image"
+                                            onError="this.src='./assets/images/faces/face1.jpg'">
+                                    </ng-container>
+                                    <ng-template #elseNoImageTemplate>
+                                        <img src="./assets/images/faces/face1.jpg" alt="user photo">
+                                    </ng-template>
+                                </td>
+                                <td>
+                                    {{ item.fullName }}
+                                </td>
+                                <td>
+                                    {{ item.email }}
+                                </td>
+                                <td>
+                                    {{ item.phone }}
+                                </td>
+                                <td>
+                                    {{ item.createdAt | date:'mediumDate' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ngb-pagination class="d-flex justify-content-center pagination-warning" (pageChange)="pageChange($event)" [collectionSize]="totalCount" [maxSize]="5" [pageSize]="pageSize" [page]="pageIndex" aria-label="Default pagination"></ngb-pagination>
+
+</ng-template>
+
+<ng-template #addModal let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel-2">Add Admin</h5>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body m-3">
+            <form [formGroup]="addEditForm" class="pt-3" (ngSubmit)="add()">
+                <div class="form-group">
+                    <label for="fullName">Full name</label>
+                    <input type="text" class="form-control form-control-lg" id="fullName" autocomplete="false"
+                        formControlName="fullName" placeholder="Enter full name.">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" class="form-control form-control-lg" id="phone" autocomplete="false"
+                        formControlName="phone" placeholder="Enter phone.">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control form-control-lg" id="email" autocomplete="false"
+                        formControlName="email" placeholder="Enter email.">
+                </div>
+                <div class="form-group">
+                    <label for="role">Admin role</label>
+                    <select class="form-control" formControlName="role">
+                        <option value="" selected>Admin role</option>
+                        <option *ngFor="let role of adminRoles" [value]="role">{{ role }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control form-control-lg" id="password" autocomplete="false"
+                        placeholder="Enter password." formControlName="password">
+                </div>
+
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" formControlName="gender" id="optionsRadios1"
+                                value="male" checked>
+                            Male
+                            <i class="input-helper"></i>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" formControlName="gender" id="optionsRadios2"
+                                value="female">
+                            Female
+                            <i class="input-helper"></i>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- <div class="mt-3">
+                    <button type="submit" class="btn btn-warning btn-fw w-100" [disabled]="loginForm.invalid">
+                        Login
+                    </button>
+                </div>
+
+                <p *ngIf="loginForm.errors" class="text-danger font-weight-bold mt-3">
+                    Invalid username or password
+                </p> -->
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" [disabled]="addEditForm.invalid">Submit</button>
+                    <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</ng-template>
