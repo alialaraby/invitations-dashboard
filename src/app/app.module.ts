@@ -21,6 +21,9 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { AdminComponent } from './views/admin/admin.component';
+import { ScanQrComponent } from './scan-qr/scan-qr.component';
+// import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 
 @NgModule({
   declarations: [
@@ -33,6 +36,7 @@ import { AdminComponent } from './views/admin/admin.component';
     ContentAnimateDirective,
     AdminComponent,
     EmptyListComponent,
+    ScanQrComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,9 @@ import { AdminComponent } from './views/admin/admin.component';
     ChartsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
-    NgSelectModule
+    NgSelectModule,
+    NgxScannerQrcodeModule,
+    // ZXingScannerModule
   ],
   providers: [
     ThemeService,

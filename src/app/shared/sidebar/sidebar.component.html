@@ -1,10 +1,17 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     
-    <li class="nav-item" *ngIf="!sharedUserData.isCorporateAdmin" [ngClass]="{ 'active': dashboard.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive">
         <span class="menu-title">Home</span>
         <i class="mdi mdi-home menu-icon"></i>
+      </a>
+    </li>
+
+    <li class="nav-item" [ngClass]="{ 'active': scanQr.isActive }">
+      <a class="nav-link" routerLink="/scan-qr" routerLinkActive #scanQr="routerLinkActive">
+        <span class="menu-title">Scan QR</span>
+        <i class="mdi mdi-qrcode-scan menu-icon"></i>
       </a>
     </li>
 

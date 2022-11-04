@@ -7,5 +7,6 @@ export class Constant {
     public static GET_USERS = 'get-users';
     public static GET_STATISTICS = 'get-statistics';
     public static SEND_QR_CODE = 'send-qr-code';
+    public static SEND_Confirm_QR_CODE = 'confirm-qr-code';
 
 }

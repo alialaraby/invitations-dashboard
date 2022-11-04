@@ -49,6 +49,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.toggleSidebar()
   }
 
   // toggle sidebar in small devices

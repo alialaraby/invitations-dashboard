@@ -63,8 +63,6 @@ export class DashboardComponent implements OnInit {
     this.dataService.getAll(Constant.GET_USERS, pageIndex, pageSize)
       .subscribe(
         (res: any) => {
-          console.log(res);
-          
           this.users = res.items;
           this.totalCount = res.count;
           this.gettingData = false;
@@ -80,15 +78,9 @@ export class DashboardComponent implements OnInit {
     this.dataService.getAll(Constant.GET_STATISTICS)
       .subscribe(
         (res: any) => {
-
-          console.log(res);
           this.totalRegistrations = res.totalRegistrations;
           this.qrsSent = res.qrsSent;
           this.totalAttendents = res.totalAttendents;
-          
-          // this.users = res.items;
-          // this.totalCount = res.count;
-          // this.gettingData = false;
         },
         (error) => {
           // this.gettingData = false;
