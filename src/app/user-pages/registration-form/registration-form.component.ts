@@ -38,7 +38,6 @@ export class RegistrationFormComponent implements OnInit {
   ngOnInit() {
     this.route.queryParams
       .subscribe(params => {
-        console.log(params);
         this.hashedPhone = params?.vertX;
       }
     );
@@ -54,9 +53,6 @@ export class RegistrationFormComponent implements OnInit {
   }
 
   submitForm() {
-    console.log(this.hashedPhone);
-    console.log(this.regForm.value);
-    
     this.gettingData = true;
     if (!this.regForm.invalid) {
       this._dataService.add(Constant.SUBMIT_FORM, {
@@ -76,7 +72,6 @@ export class RegistrationFormComponent implements OnInit {
             this.submittedSuccessfully = true;
           },
           (error) => {
-            debugger
             if(error?.OriginalError?.status == 409){
               // this.router.navigate(['/user-pages/success']);
               this.doneSubmitting = true;

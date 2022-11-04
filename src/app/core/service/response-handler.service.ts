@@ -16,8 +16,6 @@ export class ResponseHandlerService {
     constructor(private toastr: ToastrService, private router: Router) { }
 
     public HandelError(error: HttpErrorResponse) {
-        console.log(error);
-        
         if (error instanceof BadRequestError) {
             this.toastr.error('Can`t Add Item, Check Your Data', 'Failed', { timeOut: 4000 });
         } else if (error instanceof NotFoundError) {

@@ -50,15 +50,12 @@ export class ScanQrComponent implements OnInit {
 
   ngOnInit(): void {
     this.$qrData.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchToken => {
-      console.log('DDD', searchToken);
-      
       this.qrData = searchToken;      
     });
   }
 
   public onError(e: any): void {
     console.log(e);
-    
   }
   public handle(action: any, fn: string): void {
     action[fn]().subscribe(
@@ -86,9 +83,6 @@ export class ScanQrComponent implements OnInit {
     this.dataService.add(Constant.SEND_Confirm_QR_CODE, { phone: phone, hashedPhone: hashedPhone })
       .subscribe(
         (res: any) => {
-          debugger
-          console.log(res);
-          
           if(res.statusCode == 404){
             this.openInvalidInvitation();
           }else if(res.statusCode == 409){
@@ -96,18 +90,9 @@ export class ScanQrComponent implements OnInit {
           }else{
             this.openValidInvitation();
           }
-          // this.gettingData = false;
-          // this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
-          // this.modalService.dismissAll();
         },
         (error) => {
-          debugger
-
           this.openInvalidInvitation();
-
-          // this.gettingData = false;
-          // this._responseHandler.HandelError(error);
-          // this.modalService.dismissAll();
         }
       );
   }
