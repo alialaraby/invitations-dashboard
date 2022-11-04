@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Admin } from '../core/model/admin';
 import { Constant } from '../core/model/constant';
 import { ResponseActionType } from '../core/model/enums';
+import { IUser } from '../core/model/user';
 import { DataService } from '../core/service/data.service';
 import { ResponseHandlerService } from '../core/service/response-handler.service';
 import { SharedDataService } from '../core/service/shared-data.service';
@@ -15,13 +16,18 @@ import { SharedDataService } from '../core/service/shared-data.service';
 })
 export class DashboardComponent implements OnInit {
 
-  admins: Admin[] = [];
+  users: IUser[] = [];
+  selectedUser: IUser;
   sharedUserData: Admin = new Admin();
   gettingData: boolean = true;
   addEditForm: FormGroup;
   pageIndex: number = 1;
   pageSize: number = 10;
   totalCount: number = 0;
+
+  totalRegistrations: number = 0;
+  qrsSent: number = 0;
+  totalAttendents: number = 0;
 
   toggleProBanner(event) {
     event.preventDefault();
@@ -49,6 +55,46 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getAll(this.pageIndex - 1, this.pageSize);
+    this.getStatistics();
+  }
+
+  getAll(pageIndex: number = 0, pageSize: number = 10) {
+    this.dataService.getAll(Constant.GET_USERS, pageIndex, pageSize)
+      .subscribe(
+        (res: any) => {
+          console.log(res);
+          
+          this.users = res.items;
+          this.totalCount = res.count;
+          this.gettingData = false;
+        },
+        (error) => {
+          this.gettingData = false;
+          this._responseHandler.HandelError(error);
+        }
+      );
+  }
+
+  getStatistics() {
+    this.dataService.getAll(Constant.GET_STATISTICS)
+      .subscribe(
+        (res: any) => {
+
+          console.log(res);
+          this.totalRegistrations = res.totalRegistrations;
+          this.qrsSent = res.qrsSent;
+          this.totalAttendents = res.totalAttendents;
+          
+          // this.users = res.items;
+          // this.totalCount = res.count;
+          // this.gettingData = false;
+        },
+        (error) => {
+          // this.gettingData = false;
+          this._responseHandler.HandelError(error);
+        }
+      );
   }
 
   openAddModal(modal) {
@@ -67,7 +113,6 @@ export class DashboardComponent implements OnInit {
   add() {
     this.gettingData = true;
     if (!this.addEditForm.invalid) {
-      debugger
       let phones = this.addEditForm.get('phone').value.toString().split(' ');
 
       this.dataService.add(Constant.SEND_INVITATION, {
@@ -78,6 +123,7 @@ export class DashboardComponent implements OnInit {
           (res: any) => {
             this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
             this.modalService.dismissAll();
+            this.getAll();
           },
           (error) => {
             this.gettingData = false;
@@ -86,6 +132,26 @@ export class DashboardComponent implements OnInit {
           }
         );
     }
+  }
+
+  openSendQRCode(modal: any, item: IUser) {
+    this.selectedUser = item;
+    this.modalService.open(modal, { size: 'md' });
+  }
+  sendQRCode() {
+    this.dataService.add(Constant.SEND_QR_CODE, { itemId: this.selectedUser._id })
+      .subscribe(
+        (res: any) => {
+          this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
+          this.getAll();
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          this.gettingData = false;
+          this._responseHandler.HandelError(error);
+          this.modalService.dismissAll();
+        }
+      );
   }
 
   date: Date = new Date();
