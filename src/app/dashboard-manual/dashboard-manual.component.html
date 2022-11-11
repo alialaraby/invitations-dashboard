@@ -1,0 +1,363 @@
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white mr-2">
+            <i class="mdi mdi-home"></i>
+        </span>
+        Home - Manual
+    </h3>
+    <!-- <nav aria-label="breadcrumb">
+        <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false)">New
+            invitation</button>
+        <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, true)">Vip
+            invitation</button>
+    </nav> -->
+</div>
+
+<!-- <div class="row mx-0 mb-3 justify-content-center breadcrumb2">
+    <div class="col-sm-12 col-md-3 text-center mb-2">
+        <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false)">New
+            invitation</button>
+    </div>
+    <div class="col-12 col-md-3 text-center mb-2">
+        <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, true)">Vip
+            invitation</button>
+    </div>
+</div> -->
+
+<div class="row mx-0">
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-danger card-img-holder text-white">
+            <div class="card-body">
+                <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Total Registrations
+                    <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ totalRegistrations }}</h2>
+                <h6 class="card-text">of Total {{totalCount}} </h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-info card-img-holder text-white">
+            <div class="card-body">
+                <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">QRs Sent
+                    <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ qrsSent }}</h2>
+                <h6 class="card-text">of Total {{totalCount}} </h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-success card-img-holder text-white">
+            <div class="card-body">
+                <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Total Attendents
+                    <i class="mdi mdi-diamond mdi-24px float-right"></i>
+                </h4>
+                <h2 class="mb-5">{{ totalAttendents }}</h2>
+                <h6 class="card-text">of Total {{totalCount}} </h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="gettingData; else elseFoundDataTemplate">
+    <loading-spinner></loading-spinner>
+</ng-container>
+<ng-template #elseFoundDataTemplate>
+    <empty-list *ngIf="users.length <= 0"></empty-list>
+    <div class="col-lg-12 grid-margin stretch-card" *ngIf="users.length > 0">
+        <div class="card">
+            <div class="card-body" style="overflow-x: scroll;">
+                <h4 class="card-title">Users List</h4>
+
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                    <!-- Checkbox Column -->
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                *ngIf="row.submittedRegistration"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row) && row.submittedRegistration">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
+                    <!-- phone Column -->
+                    <ng-container matColumnDef="phone">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Phone </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.phone}} </td>
+                    </ng-container>
+
+                    <!-- fullName Column -->
+                    <ng-container matColumnDef="fullName">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Full Name </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.fullName}} </td>
+                    </ng-container>
+
+                    <!-- email Column -->
+                    <ng-container matColumnDef="email">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Email </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.email}} </td>
+                    </ng-container>
+
+                    <!-- company Column -->
+                    <ng-container matColumnDef="company">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Company </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.company}} </td>
+                    </ng-container>
+
+                    <!-- title Column -->
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Title </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.title}} </td>
+                    </ng-container>
+
+                    <!-- company Column -->
+                    <ng-container matColumnDef="sector">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Business Category </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;"> {{element.sector}} </td>
+                    </ng-container>
+
+                    <!-- submittedRegistration Column -->
+                    <ng-container matColumnDef="submittedRegistration">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Registered </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;">
+                            <ng-container *ngIf="element.submittedRegistration; else elseNotSubmittedTemplate">
+                                <label class="badge badge-success">YES</label>
+                            </ng-container>
+                            <ng-template #elseNotSubmittedTemplate>
+                                <label class="badge badge-danger">NO</label>
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- adminSentQR Column -->
+                    <ng-container matColumnDef="adminSentQR">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> QR Sent </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;">
+                            <ng-container *ngIf="element.adminSentQR; else elseQRNotSentTemplate">
+                                <label class="badge badge-success">YES</label>
+                            </ng-container>
+                            <ng-template #elseQRNotSentTemplate>
+                                <label class="badge badge-danger">NO</label>
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- attendedEvent Column -->
+                    <ng-container matColumnDef="attendedEvent">
+                        <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Attended Event </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;">
+                            <ng-container *ngIf="element.attendedEvent; else elseNotAttendTemplate">
+                                <label class="badge badge-success">YES</label>
+                            </ng-container>
+                            <ng-template #elseNotAttendTemplate>
+                                <label class="badge badge-danger">NO</label>
+                            </ng-template>
+                        </td>
+                    </ng-container>
+
+                    <!-- actions Column -->
+                    <ng-container matColumnDef="action" style="padding-left: 15px;">
+                        <th mat-header-cell *matHeaderCellDef> Action </th>
+                        <td mat-cell *matCellDef="let element" style="padding-left: 15px;">
+                            <button type="button" class="btn btn-warning btn-sm" style="width: max-content"
+                                [disabled]="selection.selected.length || !element.submittedRegistration"
+                                (click)="openSendQRCode(sendQRModal, element)">Send QR</button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                    </tr>
+                </table>
+                <div class="row mx-0 mt-3">
+                    <button type="button" class="btn btn-warning btn-sm mb-2 btn-export" disabled
+                        (click)="openSendQRCode(sendQRModal, null)">Send
+                        QR</button> 
+
+                    <button type="button" class="btn btn-warning btn-sm mb-2 btn-export btn-export-1"
+                        (click)="export('registered')">Export (Registered)</button>
+                    <button type="button" class="btn btn-warning btn-sm mb-2 btn-export"
+                        (click)="export('sentQr')">Export (Sent QR)</button>
+                    <button type="button" class="btn btn-warning btn-sm mb-2 btn-export"
+                        (click)="export('attendedEvent')">Export (Attended)</button>
+                    <button type="button" class="btn btn-warning btn-sm mb-2 btn-export" (click)="export('')">Export
+                        (All)</button>
+                </div>
+
+                <mat-paginator (page)="onPaginnatorChange($event)" [length]="totalCount" [pageIndex]="pageIndex"
+                    [pageSize]="pageSize" [pageSizeOptions]="[50, 100]" showFirstLastButtons>
+                </mat-paginator>
+
+            </div>
+        </div>
+    </div>
+    <!-- <ngb-pagination class="d-flex justify-content-center pagination-warning" (pageChange)="pageChange($event)"
+      [collectionSize]="totalCount" [maxSize]="5" [pageSize]="pageSize" [page]="pageIndex"
+      aria-label="Default pagination"></ngb-pagination> -->
+
+</ng-template>
+
+<ng-template #addModal let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <ng-container *ngIf="isSendingVip; else elseIsSendingVipHeaderTemplate">
+                <h5 class="modal-title" id="exampleModalLabel-2">Send QRs to VIPs</h5>
+            </ng-container>
+            <ng-template #elseIsSendingVipHeaderTemplate>
+                <h5 class="modal-title" id="exampleModalLabel-2">Send new invitation link</h5>
+            </ng-template>
+
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body m-3">
+
+            <div>
+                <label for="file-upload" class="custom-file-upload w-100">
+                    <i class="fa fa-cloud-upload"></i> Upload from excel.
+                </label>
+                <input id="file-upload" type="file" (change)="onFileChange($event)" />
+            </div>
+
+            <ng-container *ngIf="isSendingVip; else elseIsNotSendingVipTemplate">
+                <div class="table-responsive" *ngIf="vipUsers && vipUsers.length > 0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Company
+                                </th>
+                                <th>
+                                    Title
+                                </th>
+                                <th>
+                                    Business Category
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of vipUsers">
+                                <td>
+                                    {{ item.phone }}
+                                </td>
+                                <td>
+                                    {{ item.fullName }}
+                                </td>
+                                <td>
+                                    {{ item.email }}
+                                </td>
+                                <td>
+                                    {{ item.company }}
+                                </td>
+                                <td>
+                                    {{ item.title }}
+                                </td>
+                                <td>
+                                    {{ item.sector }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" [disabled]="vipUsers && vipUsers.length <= 0"
+                        (click)="sendInvitationVip()">Submit</button>
+                    <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+                </div>
+
+            </ng-container>
+            <ng-template #elseIsNotSendingVipTemplate>
+                <form [formGroup]="addEditForm" class="pt-3" (ngSubmit)="sendInvitation()">
+                    <div class="form-group">
+                        <label for="phone">Phones</label>
+                        <textarea class="form-control form-control-lg" id="phone" formControlName="phone"
+                            placeholder="Enter phones separated by a space." cols="30" rows="10"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success"
+                            [disabled]="addEditForm.invalid || sending">Submit</button>
+                        <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+                    </div>
+                </form>
+            </ng-template>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #sendQRModal let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel-2">Send Qr</h5>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <ng-container *ngIf="selectedUser; else elseNoSelectedUserTemplate">
+            <div class="modal-body m-3">
+                Are you sure of sending QR code to
+                <span class="text-success font-weight-bold">{{ selectedUser.fullName }}</span> - <span
+                    class="text-success font-weight-bold">{{ selectedUser.phone }}</span>?
+            </div>
+        </ng-container>
+        <ng-template #elseNoSelectedUserTemplate>
+            <div class="modal-body m-3">
+                Are you sure of sending QR codes to <span class="text-success font-weight-bold">all selected</span>
+                users?
+            </div>
+        </ng-template>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-warning" [disabled]="sending" (click)="sendQRCode()">Send</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Close</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #resultModal let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel-2">Result.</h5>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body m-3">
+            <div>
+                <p class="text-success font-weight-bold mb-0">These numbers already recieved their registration links.
+                </p>
+                <span *ngFor="let item of numbersAlreadySent">{{item}} -</span>
+            </div>
+            <div>
+                <p class="text-danger font-weight-bold mb-0 mt-3">These numbers have errors with their invitations.</p>
+                <span *ngFor="let item of erroredNumbers">{{item}} -</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.close()">Close</button>
+        </div>
+    </div>
+</ng-template>

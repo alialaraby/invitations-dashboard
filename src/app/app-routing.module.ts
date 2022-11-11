@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/service/auth.guard';
+import { DashboardManualComponent } from './dashboard-manual/dashboard-manual.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ScanQrComponent } from './scan-qr/scan-qr.component';
 import { AdminComponent } from './views/admin/admin.component';
@@ -14,8 +15,9 @@ const routes: Routes = [
   // { path: 'registration-form', redirectTo: '/user-pages/registration-form', pathMatch: 'full' },
 
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard-manual', component: DashboardManualComponent, canActivate: [AuthGuard] },
   { path: 'scan-qr', component: ScanQrComponent, canActivate: [AuthGuard] },
-  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+  // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
   
   { path: 'user-pages', loadChildren: () => import('./user-pages/user-pages.module').then(m => m.UserPagesModule) },
   
@@ -24,7 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

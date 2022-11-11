@@ -49,7 +49,12 @@ export class LoginComponent implements OnInit {
             this.sharedData.setuserData(admin);
             this.sharedData.setauthenticated(true);
             this.SetLocalStorageData(admin);
-            this.router.navigate(['/dashboard']);
+
+            if (admin.isSuperAdmin) {
+              this.router.navigate(['/dashboard']);
+            }else{
+              this.router.navigate(['/scan-qr']);
+            }
 
           }, (error) => {
             this.loginForm.setErrors({
@@ -73,10 +78,10 @@ export class LoginComponent implements OnInit {
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("fullName", data.fullName);
     localStorage.setItem("role", data.role);
-    localStorage.setItem("isSuperAdmin", data.isSuperAdmin.toString());
-    localStorage.setItem("isAdmin", data.isAdmin.toString());
-    localStorage.setItem("isCorporateAdmin", data.isCorporateAdmin.toString());
-    localStorage.setItem("isAnalystAdmin", data.isAnalystAdmin.toString());
+    localStorage.setItem("isSuperAdmin", data.role == 'superAdmin' ? 'true' : 'false');
+    // localStorage.setItem("isAdmin", data.isAdmin.toString());
+    // localStorage.setItem("isCorporateAdmin", data.isCorporateAdmin.toString());
+    // localStorage.setItem("isAnalystAdmin", data.isAnalystAdmin.toString());
   }
 
   setRole(role: AdminRoles, admin: Admin) {
@@ -85,17 +90,17 @@ export class LoginComponent implements OnInit {
         admin.isSuperAdmin = true;
         break;
 
-      case AdminRoles.Admin:
-        admin.isAdmin = true;
-        break;
+      // case AdminRoles.Admin:
+      //   admin.isAdmin = true;
+      //   break;
 
-      case AdminRoles.CorporateAdmin:
-        admin.isCorporateAdmin = true;
-        break;
+      // case AdminRoles.CorporateAdmin:
+      //   admin.isCorporateAdmin = true;
+      //   break;
 
-      case AdminRoles.Analyst:
-        admin.isAnalystAdmin = true;
-        break;
+      // case AdminRoles.Analyst:
+      //   admin.isAnalystAdmin = true;
+      //   break;
     }
     return admin;
   }

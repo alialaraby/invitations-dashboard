@@ -1,9 +1,15 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     
-    <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }">
+    <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboard.isActive }">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive">
         <span class="menu-title">Home</span>
+        <i class="mdi mdi-home menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboardManula.isActive }">
+      <a class="nav-link" routerLink="/dashboard-manual" routerLinkActive #dashboardManula="routerLinkActive">
+        <span class="menu-title">Home - Manual</span>
         <i class="mdi mdi-home menu-icon"></i>
       </a>
     </li>

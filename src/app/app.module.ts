@@ -24,7 +24,10 @@ import { AdminComponent } from './views/admin/admin.component';
 import { ScanQrComponent } from './scan-qr/scan-qr.component';
 // import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
-
+import {MatTableModule} from '@angular/material/table';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import { DashboardManualComponent } from './dashboard-manual/dashboard-manual.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +40,7 @@ import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
     AdminComponent,
     EmptyListComponent,
     ScanQrComponent,
+    DashboardManualComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +55,9 @@ import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
     ToastrModule.forRoot(),
     NgSelectModule,
     NgxScannerQrcodeModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
     // ZXingScannerModule
   ],
   providers: [

@@ -17,6 +17,7 @@
     "@angular/compiler": "~10.1.6",
     "@angular/core": "~10.1.6",
     "@angular/forms": "~10.1.6",
+    "@angular/material": "^10.2.5",
     "@angular/platform-browser": "~10.1.6",
     "@angular/platform-browser-dynamic": "~10.1.6",
     "@angular/router": "~10.1.6",
@@ -26,6 +27,7 @@
     "@zxing/browser": "^0.1.1",
     "@zxing/library": "^0.19.1",
     "@zxing/ngx-scanner": "^3.6.2",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.3",
     "compass-mixins": "^0.12.10",
@@ -36,6 +38,7 @@
     "node-sass": "^4.14.1",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.3",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.1"
   },
   "devDependencies": {

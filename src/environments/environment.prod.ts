@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: "https://api.niletaxi.app/api/"
+  baseUrl: "https://api.events.shiragroup.com/api/"
 };

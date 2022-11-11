@@ -49,6 +49,13 @@ export class ScanQrComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    // navigator.mediaDevices.getUserMedia({
+    //   video: {
+    //     facingMode: { exact: "environment" }
+    //   }
+    // });
+
     this.$qrData.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchToken => {
       this.qrData = searchToken;      
     });

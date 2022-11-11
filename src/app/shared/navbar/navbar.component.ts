@@ -23,6 +23,10 @@ export class NavbarComponent implements OnInit {
 
   oldPasswordControl = new FormControl('', Validators.required);
   newPasswordControl = new FormControl('', Validators.required);
+  admins: any[] = [];
+
+  selectedAdminId: string = '';
+  newPassword: string = '';
 
   constructor(
     config: NgbDropdownConfig,
@@ -49,7 +53,16 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.toggleSidebar()
+    this.toggleSidebar();
+    this.dataService.getAll(Constant.GET_ADMINS)
+      .subscribe(
+        (res: any) => {
+          this.admins = res.admins;
+        },
+        (error) => {
+          this._responseHandler.HandelError(error);
+        }
+      );
   }
 
   // toggle sidebar in small devices
@@ -87,25 +100,25 @@ export class NavbarComponent implements OnInit {
   }
 
   openResetPassword(modal: any) {
-    this.modalService.open(modal, { size: 'md' });
+    this.modalService.open(modal, { size: 'lg' });
   }
 
-  resetPassword() {
-    // this.dataService.resetPassword(Constant.ADMIN_RESET_PASSWORD, {
-    //   oldPassword: this.oldPasswordControl.value,
-    //   newPassword: this.newPasswordControl.value
-    // })
-    //   .subscribe(
-    //     (res: any) => {
-    //       this._responseHandler.HandleSuccess(res, ResponseActionType.Updated);
-    //       this.modalService.dismissAll();
-    //       this.authService.logout();
-    //     },
-    //     (error) => {
-    //       this._responseHandler.HandelError(error);
-    //       this.modalService.dismissAll();
-    //     }
-    //   );
+  resetPassword(id, password) {
+    this.dataService.resetPassword(Constant.RESET_PASS, {
+      adminId: id,
+      password: password
+    })
+      .subscribe(
+        (res: any) => {
+          this._responseHandler.HandleSuccess(res, ResponseActionType.Updated);
+          this.modalService.dismissAll();
+          // this.authService.logout();
+        },
+        (error) => {
+          this._responseHandler.HandelError(error);
+          this.modalService.dismissAll();
+        }
+      );
   }
 
 }

@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Admin } from '../core/model/admin';
@@ -10,16 +12,15 @@ import { DataService } from '../core/service/data.service';
 import { ResponseHandlerService } from '../core/service/response-handler.service';
 import { SharedDataService } from '../core/service/shared-data.service';
 import * as XLSX from 'xlsx';
-import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import * as bcrypt from 'bcryptjs';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+  selector: 'app-dashboard-manual',
+  templateUrl: './dashboard-manual.component.html',
+  styleUrls: ['./dashboard-manual.component.scss']
 })
-export class DashboardComponent implements OnInit  {
+export class DashboardManualComponent implements OnInit {
 
   // excel related
   data: any;
@@ -51,8 +52,8 @@ export class DashboardComponent implements OnInit  {
   erroredNumbers: string[] = [];
   numbersAlreadySent: string[] = [];
 
-  @ViewChild('resultModal', {static: false}) resultModalRef: ElementRef;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild('resultModal', { static: false }) resultModalRef: ElementRef;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   isSendingVip: boolean = false;
   sending: boolean = false;
@@ -84,9 +85,9 @@ export class DashboardComponent implements OnInit  {
         this.sharedUserData.isCorporateAdmin = userData.isCorporateAdmin;
         this.sharedUserData.isAnalystAdmin = userData.isAnalystAdmin;
 
-        if(!this.sharedUserData.isSuperAdmin)
+        if (!this.sharedUserData.isSuperAdmin)
           this.router.navigate(['/scan-qr']);
-        
+
       }
     );
   }
@@ -107,7 +108,7 @@ export class DashboardComponent implements OnInit  {
 
           this.totalCount = res.count;
           this.dataSource = new MatTableDataSource<IUser>(data);
-          
+
           this.gettingData = false;
         },
         (error) => {
@@ -168,12 +169,12 @@ export class DashboardComponent implements OnInit  {
       })
         .subscribe(
           (res: any) => {
-            if((res.erroredNumbers && res.erroredNumbers.length > 0) || (res.numbersAlreadySent && res.numbersAlreadySent.length > 0)){
+            if ((res.erroredNumbers && res.erroredNumbers.length > 0) || (res.numbersAlreadySent && res.numbersAlreadySent.length > 0)) {
               this.erroredNumbers = res.erroredNumbers;
               this.numbersAlreadySent = res.numbersAlreadySent;
               this.openResult();
             }
-            
+
             this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
             this.getAll();
             this.sending = false;
@@ -222,7 +223,7 @@ export class DashboardComponent implements OnInit  {
     }
   }
 
-  pageChange(pageIndex: number){
+  pageChange(pageIndex: number) {
     this.getAll(pageIndex - 1);
   }
 
@@ -230,40 +231,38 @@ export class DashboardComponent implements OnInit  {
     this.selectedUser = item;
     this.modalService.open(modal, { size: 'md' });
   }
-  sendQRCode() {
-    this.sending = true;
-
-    this.erroredNumbers = [];
-    this.numbersAlreadySent = [];
-
-    let selectedIds = [];
-    if(this.selection.selected.length > 0){
-      selectedIds = this.selection.selected.map(x => x._id);
-    }else{
-      selectedIds = [this.selectedUser._id];
-    }
-
-    this.dataService.add(Constant.SEND_QR_CODE, { itemIds: selectedIds })
+  async sendQRCode() {
+    
+    if(this.selectedUser){
+      this.sending = true;
+      
+      this.dataService.add(Constant.SEND_QR_CODE_MANUAL, { itemIds: [this.selectedUser._id] })
       .subscribe(
         (res: any) => {
-          this.erroredNumbers = res.erroredNumbers;
-          this.openResult();
+            let QRLink = `https://api.events.shiragroup.com/api/open-qr-code-m?phone=${this.selectedUser.phone}vertX=${this.selectedUser.hashedPhone}`;
+      
+            let message: string = `*Invitation* %0A This code is private and for one-time use, please don't share it with others. %0A %0A
+            هذا الكود صالح للاستخدام عند الدخول لمرة واحدة...لا تشاركه مع الاخرين. 
+            %0A %0A ${QRLink}`;
+            console.log(QRLink);
+            
+            
+            window.open(`https://api.whatsapp.com/send?phone=2${this.selectedUser.phone}&text=${message}`)
+            this.sending = false;
+            this.getAll()
+            this.modalService.dismissAll();
+          },
+          (error) => {
+            this._responseHandler.HandelError(error);
+            this.sending = false;
+            this.modalService.dismissAll();
+          }
+        );
 
-          this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
-          this.getAll();
-          this.modalService.dismissAll();
-          this.sending = false;
-          this.selection.clear();
-        },
-        (error) => {
-          this.gettingData = false;
-          this._responseHandler.HandelError(error);
-          this.modalService.dismissAll();
-          this.sending = false;
-          this.selection.clear();
+    }else{
+      this.sending = false;
+    }
 
-        }
-      );
   }
 
   openResult() {
@@ -285,12 +284,12 @@ export class DashboardComponent implements OnInit  {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
-      
+
       let phones: string[] = [];
-      if(this.isSendingVip){
+      if (this.isSendingVip) {
         this.data.shift();
         this.data.forEach((element) => {
-          if(element && element[0] && element[0].toString().trim().length > 0)
+          if (element && element[0] && element[0].toString().trim().length > 0)
             this.vipUsers.push({
               phone: '0' + element[0].toString().trim(),
               email: element[1],
@@ -300,14 +299,14 @@ export class DashboardComponent implements OnInit  {
               title: element[5],
             });
         });
-      }else{
+      } else {
         this.data.forEach(element => {
-          if(element && element[0])
+          if (element && element[0])
             phones.push('0' + element[0].toString().trim());
         });
       }
 
-      if(phones && phones.length > 0){
+      if (phones && phones.length > 0) {
         this.addEditForm.get('phone').setValue(phones.join(' '));
       }
     };
@@ -317,7 +316,7 @@ export class DashboardComponent implements OnInit  {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.filter(x => x.submittedRegistration && !x.adminSentQR).length;
+    const numRows = this.dataSource.data.filter(x => x.submittedRegistration).length;
     return numSelected === numRows;
   }
   isSelectedPage() {
@@ -335,7 +334,7 @@ export class DashboardComponent implements OnInit  {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => {
-        if(row.submittedRegistration && !row.adminSentQR)
+        if (row.submittedRegistration)
           this.selection.select(row)
       });
   }
@@ -376,153 +375,5 @@ export class DashboardComponent implements OnInit  {
         }
       );
   }
-
-
-  date: Date = new Date();
-
-  visitSaleChartData = [{
-    label: 'CHN',
-    data: [20, 40, 15, 35, 25, 50, 30, 20],
-    borderWidth: 1,
-    fill: false,
-  },
-  {
-    label: 'USA',
-    data: [40, 30, 20, 10, 50, 15, 35, 40],
-    borderWidth: 1,
-    fill: false,
-  },
-  {
-    label: 'UK',
-    data: [70, 10, 30, 40, 25, 50, 15, 30],
-    borderWidth: 1,
-    fill: false,
-  }];
-
-  visitSaleChartLabels = ["2013", "2014", "2014", "2015", "2016", "2017"];
-
-  visitSaleChartOptions = {
-    responsive: true,
-    legend: false,
-    scales: {
-      yAxes: [{
-        ticks: {
-          display: false,
-          min: 0,
-          stepSize: 20,
-          max: 80
-        },
-        gridLines: {
-          drawBorder: false,
-          color: 'rgba(235,237,242,1)',
-          zeroLineColor: 'rgba(235,237,242,1)'
-        }
-      }],
-      xAxes: [{
-        gridLines: {
-          display: false,
-          drawBorder: false,
-          color: 'rgba(0,0,0,1)',
-          zeroLineColor: 'rgba(235,237,242,1)'
-        },
-        ticks: {
-          padding: 20,
-          fontColor: "#9c9fa6",
-          autoSkip: true,
-        },
-        categoryPercentage: 0.4,
-        barPercentage: 0.4
-      }]
-    }
-  };
-
-  visitSaleChartColors = [
-    {
-      backgroundColor: [
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-      ],
-      borderColor: [
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-        'rgba(154, 85, 255, 1)',
-      ]
-    },
-    {
-      backgroundColor: [
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-      ],
-      borderColor: [
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(254, 112, 150, 1)',
-      ]
-    },
-    {
-      backgroundColor: [
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-      ],
-      borderColor: [
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-        'rgba(177, 148, 250, 1)',
-      ]
-    },
-  ];
-
-  trafficChartData = [
-    {
-      data: [30, 30, 40],
-    }
-  ];
-
-  trafficChartLabels = ["Search Engines", "Direct Click", "Bookmarks Click"];
-
-  trafficChartOptions = {
-    responsive: true,
-    animation: {
-      animateScale: true,
-      animateRotate: true
-    },
-    legend: false,
-  };
-
-  trafficChartColors = [
-    {
-      backgroundColor: [
-        'rgba(177, 148, 250, 1)',
-        'rgba(254, 112, 150, 1)',
-        'rgba(132, 217, 210, 1)'
-      ],
-      borderColor: [
-        'rgba(177, 148, 250, .2)',
-        'rgba(254, 112, 150, .2)',
-        'rgba(132, 217, 210, .2)'
-      ]
-    }
-  ];
 
 }
