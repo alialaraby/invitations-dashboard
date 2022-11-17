@@ -55,6 +55,7 @@ export class DashboardComponent implements OnInit  {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   isSendingVip: boolean = false;
+  isSendingMessage: boolean = false;
   sending: boolean = false;
 
   // ngAfterViewInit() {
@@ -139,8 +140,9 @@ export class DashboardComponent implements OnInit  {
       );
   }
 
-  openAddModal(modal, isSendingVip: boolean) {
+  openAddModal(modal, isSendingVip: boolean, isSendingMessage: boolean) {
     this.isSendingVip = isSendingVip;
+    this.isSendingMessage = isSendingMessage;
     this.vipUsers = [];
     this.buildForm();
     this.modalService.open(modal);
@@ -150,6 +152,7 @@ export class DashboardComponent implements OnInit  {
     this.addEditForm = this.fb.group({
       // phoneKey: ['', Validators.required],
       phone: ['', Validators.required],
+      message: [''],
       // invitationLink: ['', Validators.required], // http://localhost:4200/registration-form
     });
   }
@@ -161,29 +164,53 @@ export class DashboardComponent implements OnInit  {
     this.gettingData = true;
     if (!this.addEditForm.invalid) {
       let phones = this.addEditForm.get('phone').value.toString().split(' ');
-
-      this.dataService.add(Constant.SEND_INVITATION, {
-        phones: phones,
-        invitationLink: Constant.INVITATION_LINK,
-      })
-        .subscribe(
-          (res: any) => {
-            if((res.erroredNumbers && res.erroredNumbers.length > 0) || (res.numbersAlreadySent && res.numbersAlreadySent.length > 0)){
-              this.erroredNumbers = res.erroredNumbers;
-              this.numbersAlreadySent = res.numbersAlreadySent;
-              this.openResult();
+      if(this.isSendingMessage){
+        this.dataService.add(Constant.SEND_MESSAGE, {
+          phones: phones,
+          message: this.addEditForm.get('message').value.replace(/\n/g, " "),
+        })
+          .subscribe(
+            (res: any) => {
+              if((res.erroredNumbers && res.erroredNumbers.length > 0) || (res.numbersAlreadySent && res.numbersAlreadySent.length > 0)){
+                this.erroredNumbers = res.erroredNumbers;
+                // this.numbersAlreadySent = res.numbersAlreadySent;
+                this.openResult();
+              }
+              
+              this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
+              this.getAll();
+              this.sending = false;
+            },
+            (error) => {
+              this.gettingData = false;
+              this._responseHandler.HandelError(error);
+              this.sending = false;
             }
-            
-            this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
-            this.getAll();
-            this.sending = false;
-          },
-          (error) => {
-            this.gettingData = false;
-            this._responseHandler.HandelError(error);
-            this.sending = false;
-          }
-        );
+          );
+      }else{
+        this.dataService.add(Constant.SEND_INVITATION, {
+          phones: phones,
+          invitationLink: Constant.INVITATION_LINK,
+        })
+          .subscribe(
+            (res: any) => {
+              if((res.erroredNumbers && res.erroredNumbers.length > 0) || (res.numbersAlreadySent && res.numbersAlreadySent.length > 0)){
+                this.erroredNumbers = res.erroredNumbers;
+                this.numbersAlreadySent = res.numbersAlreadySent;
+                this.openResult();
+              }
+              
+              this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
+              this.getAll();
+              this.sending = false;
+            },
+            (error) => {
+              this.gettingData = false;
+              this._responseHandler.HandelError(error);
+              this.sending = false;
+            }
+          );
+      }
     }
   }
 
@@ -375,6 +402,10 @@ export class DashboardComponent implements OnInit  {
           this._responseHandler.HandelError(error);
         }
       );
+  }
+
+  hasValue(){
+    return (this.addEditForm.get('message') && this.addEditForm.get('message').value.trim().length > 0)
   }
 
 

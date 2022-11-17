@@ -15,7 +15,7 @@ const routes: Routes = [
   // { path: 'registration-form', redirectTo: '/user-pages/registration-form', pathMatch: 'full' },
 
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard-manual', component: DashboardManualComponent, canActivate: [AuthGuard] },
+  // { path: 'dashboard-manual', component: DashboardManualComponent, canActivate: [AuthGuard] },
   { path: 'scan-qr', component: ScanQrComponent, canActivate: [AuthGuard] },
   // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
   

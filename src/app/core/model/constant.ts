@@ -14,5 +14,6 @@ export class Constant {
     public static SEND_Confirm_QR_CODE = 'confirm-qr-code';
     public static EXPORT = 'export';
     public static GET_SHORT_URL = 'get-short-url';
+    public static SEND_MESSAGE = 'send-message';
 
 }

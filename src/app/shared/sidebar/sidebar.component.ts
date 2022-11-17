@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Admin } from 'src/app/core/model/admin';
 import { SharedDataService } from 'src/app/core/service/shared-data.service';
 
@@ -16,6 +16,8 @@ export class SidebarComponent implements OnInit {
   public samplePagesCollapsed = false;
   
   sharedUserData: Admin = new Admin();
+  @ViewChild('sidebar', { read: ElementRef, static:false }) sidebarRef: ElementRef;
+
 
   constructor(
     private sharedData: SharedDataService
@@ -51,4 +53,7 @@ export class SidebarComponent implements OnInit {
     });
   }
 
+  closeItem(){
+    this.sidebarRef.nativeElement.classList.remove('active')
+  }
 }

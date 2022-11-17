@@ -6,17 +6,21 @@
     Home
   </h3>
   <nav aria-label="breadcrumb">
-    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false)">New invitation</button>
-    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, true)">Vip invitation</button>
+    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, false)">New invitation</button>
+    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, true, false)">Vip invitation</button>
+    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, true)">New Message</button>
   </nav>
 </div>
 
 <div class="row mx-0 mb-3 justify-content-center breadcrumb2">
   <div class="col-sm-12 col-md-3 text-center mb-2">
-    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false)">New invitation</button>
+    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false, false)">New invitation</button>
   </div>
   <div class="col-12 col-md-3 text-center mb-2">
-    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, true)">Vip invitation</button>
+    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, true, false)">Vip invitation</button>
+  </div>
+  <div class="col-12 col-md-3 text-center mb-2">
+    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false, true)">New Message</button>
   </div>
 </div>
 
@@ -224,7 +228,13 @@
         <h5 class="modal-title" id="exampleModalLabel-2">Send QRs to VIPs</h5>        
       </ng-container>
       <ng-template #elseIsSendingVipHeaderTemplate>
-        <h5 class="modal-title" id="exampleModalLabel-2">Send new invitation link</h5>
+      
+        <ng-container *ngIf="isSendingMessage; else elseIsSendingMessageTemplate">
+          <h5 class="modal-title" id="exampleModalLabel-2">Send new message</h5>        
+        </ng-container>
+        <ng-template #elseIsSendingMessageTemplate>
+          <h5 class="modal-title" id="exampleModalLabel-2">Send new invitation link</h5>
+        </ng-template>
       </ng-template>
       
       <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
@@ -298,6 +308,11 @@
       </ng-container>
       <ng-template #elseIsNotSendingVipTemplate>
         <form [formGroup]="addEditForm" class="pt-3" (ngSubmit)="sendInvitation()">
+          <div class="form-group" *ngIf="isSendingMessage">
+            <label for="message">Message</label>
+            <textarea class="form-control form-control-lg" id="message" formControlName="message" #message
+              placeholder="Enter message." cols="30" rows="4"></textarea>
+          </div>
           <div class="form-group">
             <label for="phone">Phones</label>
             <textarea class="form-control form-control-lg" id="phone" formControlName="phone"
@@ -305,7 +320,7 @@
           </div>
   
           <div class="modal-footer">
-              <button type="submit" class="btn btn-success" [disabled]="addEditForm.invalid || sending">Submit</button>
+              <button type="submit" class="btn btn-success" [disabled]="addEditForm.invalid || sending || !hasValue()">Submit</button>
               <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
           </div>
         </form>

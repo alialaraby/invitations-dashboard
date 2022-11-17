@@ -1,20 +1,20 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
+<nav class="sidebar sidebar-offcanvas" id="sidebar" #sidebar>
   <ul class="nav">
     
-    <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboard.isActive }">
+    <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboard.isActive }" (click)="closeItem()">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive">
         <span class="menu-title">Home</span>
         <i class="mdi mdi-home menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboardManula.isActive }">
+    <!-- <li class="nav-item" *ngIf="sharedUserData.isSuperAdmin" [ngClass]="{ 'active': dashboardManula.isActive }" (click)="closeItem()">
       <a class="nav-link" routerLink="/dashboard-manual" routerLinkActive #dashboardManula="routerLinkActive">
         <span class="menu-title">Home - Manual</span>
         <i class="mdi mdi-home menu-icon"></i>
       </a>
-    </li>
+    </li> -->
 
-    <li class="nav-item" [ngClass]="{ 'active': scanQr.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': scanQr.isActive }" (click)="closeItem()">
       <a class="nav-link" routerLink="/scan-qr" routerLinkActive #scanQr="routerLinkActive">
         <span class="menu-title">Scan QR</span>
         <i class="mdi mdi-qrcode-scan menu-icon"></i>
