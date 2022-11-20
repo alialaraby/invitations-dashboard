@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, NavigationStart, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 
 @Component({
@@ -14,7 +14,9 @@ export class AppComponent implements OnInit {
   showFooter: boolean = true;
   isLoading: boolean;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router
+  ) {
 
     // Removing Sidebar, Navbar, Footer for Documentation, Error and Auth pages
     router.events.forEach((event) => {

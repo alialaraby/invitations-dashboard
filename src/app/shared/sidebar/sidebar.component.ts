@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Admin } from 'src/app/core/model/admin';
 import { SharedDataService } from 'src/app/core/service/shared-data.service';
 
@@ -20,7 +20,8 @@ export class SidebarComponent implements OnInit {
 
 
   constructor(
-    private sharedData: SharedDataService
+    private sharedData: SharedDataService,
+    private renderer: Renderer2
   ) { 
     this.sharedData.userData$.subscribe(
       (userData) => {
@@ -33,6 +34,15 @@ export class SidebarComponent implements OnInit {
         this.sharedUserData.isAnalystAdmin = userData.isAnalystAdmin;
       }
     );
+
+    this.renderer.listen('window', 'click', (e: Event) => {
+      if(this.sidebarRef.nativeElement.classList.contains('active')){
+        if (e.target && e.target['classList'] && !e.target['classList'].contains('mdi-menu') && e.target !== this.sidebarRef.nativeElement) {
+          this.sidebarRef.nativeElement.classList.remove('active')
+        }
+      }
+      
+    });
   }
 
   ngOnInit() {
