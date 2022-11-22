@@ -9,6 +9,7 @@
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, false)">New invitation</button>
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, true, false)">Vip invitation</button>
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, true)">New Message</button>
+    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openClearDB(clearModal)">Clear Database</button>
   </nav>
 </div>
 
@@ -21,6 +22,9 @@
   </div>
   <div class="col-12 col-md-3 text-center mb-2">
     <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false, true)">New Message</button>
+  </div>
+  <div class="col-12 col-md-3 text-center mb-2">
+    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openClearDB(clearModal)">Clear Database</button>
   </div>
 </div>
 
@@ -376,6 +380,26 @@
       </div>
     </div>
     <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close()">Close</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #clearModal let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel-2">Clear Database.</h5>
+      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body m-3">
+      <div>
+        <h2 class="text-danger font-weight-bold mb-0">Are you sure you want to delete all users?</h2>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="clearDB()">Delete Users</button>
       <button type="button" class="btn btn-light" (click)="modal.close()">Close</button>
     </div>
   </div>

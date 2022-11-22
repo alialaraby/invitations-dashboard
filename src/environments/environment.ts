@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: "https://api.events.shiragroup.com/api/"
-  // baseUrl: "http://localhost:3000/api/"
+  // baseUrl: "https://api.events.shiragroup.com/api/"
+  baseUrl: "http://localhost:3000/api/"
 };
 
 /*

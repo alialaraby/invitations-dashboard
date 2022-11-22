@@ -21,6 +21,11 @@ export class DataService {
             .pipe(catchError(this.handleError));
     }
 
+    public clearDB(url: string): Observable<Object> {
+        return this.http.get(environment.baseUrl + url)
+            .pipe(catchError(this.handleError));
+    }
+
     public getById(url: string, _id: string): Observable<Object> {
         return this.http.post(environment.baseUrl + url, { _id })
             .pipe(catchError(this.handleError));

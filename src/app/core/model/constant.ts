@@ -15,5 +15,6 @@ export class Constant {
     public static EXPORT = 'export';
     public static GET_SHORT_URL = 'get-short-url';
     public static SEND_MESSAGE = 'send-message';
+    public static CLEAR_DB = 'clear-db';
 
 }

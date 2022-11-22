@@ -408,6 +408,26 @@ export class DashboardComponent implements OnInit  {
     return (this.addEditForm.get('message') && this.addEditForm.get('message').value.trim().length > 0)
   }
 
+  openClearDB(modal: any) {
+    this.modalService.open(modal, { size: 'md' });
+  }
+
+  clearDB(){
+    this.dataService.clearDB(Constant.CLEAR_DB)
+      .subscribe(
+        (res: any) => {
+          this._responseHandler.HandleSuccess(res, ResponseActionType.Sent);
+          this.getAll();
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          this._responseHandler.HandelError(error);
+          this.modalService.dismissAll();
+          this.getAll();
+        }
+      );
+  }
+
 
   date: Date = new Date();
 
