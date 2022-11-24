@@ -9,7 +9,6 @@
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, false)">New invitation</button>
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, true, false)">Vip invitation</button>
     <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openAddModal(addModal, false, true)">New Message</button>
-    <button type="button" class="btn btn-warning btn-fw breadcrumb-btn" (click)="openClearDB(clearModal)">Clear Database</button>
   </nav>
 </div>
 
@@ -22,9 +21,6 @@
   </div>
   <div class="col-12 col-md-3 text-center mb-2">
     <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openAddModal(addModal, false, true)">New Message</button>
-  </div>
-  <div class="col-12 col-md-3 text-center mb-2">
-    <button type="button" class="btn btn-warning btn-fw btn-action" (click)="openClearDB(clearModal)">Clear Database</button>
   </div>
 </div>
 
@@ -191,6 +187,7 @@
           <button type="button" class="btn btn-warning btn-sm mb-2 btn-export" (click)="export('sentQr')">Export (Sent QR)</button>
           <button type="button" class="btn btn-warning btn-sm mb-2 btn-export" (click)="export('attendedEvent')">Export (Attended)</button>
           <button type="button" class="btn btn-warning btn-sm mb-2 btn-export" (click)="export('')">Export (All)</button>
+          <button type="button" class="btn btn-danger btn-sm mb-2 btn-export" style="background-color: #C82333 !important; border-color: #C82333 !important;" (click)="openClearDB(clearModal)">Reset</button>
         </div>
 
         <!-- <div class="row mx-0 mt-3">
@@ -399,7 +396,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-warning" (click)="clearDB()">Delete Users</button>
+      <button type="button" class="btn btn-danger" style="background-color: #C82333 !important; border-color: #C82333 !important;" (click)="clearDB()">Delete Users</button>
       <button type="button" class="btn btn-light" (click)="modal.close()">Close</button>
     </div>
   </div>
